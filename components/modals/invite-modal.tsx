@@ -31,10 +31,10 @@ export const InviteModal = () => {
         }, 1000);
     }
 
-    const onNew = async () => {
+    const onNew = async() => {
         try {
             setIsLoading(true);
-            const response = await axios.patch(`/api/servers/${server?.id}/invited-code`);
+            const response = await axios.patch(`/api/servers/${server?.id}/invite-code`);
 
             onOpen("invite", {server: response.data});
         } catch(error){
@@ -43,6 +43,7 @@ export const InviteModal = () => {
             setIsLoading(false);
         }
     }
+  
     return (
         <Dialog open = {isModalOpen} onOpenChange={onClose}>
             <DialogContent className="bg-white text-black p-0 overflow-hidden">
