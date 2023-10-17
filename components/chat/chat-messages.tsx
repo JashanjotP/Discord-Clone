@@ -54,6 +54,7 @@ export const ChatMessages = ({name,member,chatId,apiUrl,socketUrl,socketQuery,pa
                 </p>
             </div>
         )
+      }
     return (
         <div className="flex-1 flex flex-col py-4 overflow-y-auto">
             <div className="flex-1"/>
