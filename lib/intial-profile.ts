@@ -12,6 +12,7 @@ export const intialProfile = async () => {
 
     const profile = await db.profile.findUnique({
         where:{
+            //@ts-ignore
             userId: user.id
         }
     });
@@ -22,9 +23,13 @@ export const intialProfile = async () => {
 
     const newProfile = await db.profile.create({
         data: {
+            //@ts-ignore
             userId: user.id,
+            //@ts-ignore
             name: `${user.firstName} ${user.lastName}`,
+            //@ts-ignore
             imageUrl: user.imageUrl,
+            //@ts-ignore
             email: user.emailAddresses[0].emailAddress
         }
     });
