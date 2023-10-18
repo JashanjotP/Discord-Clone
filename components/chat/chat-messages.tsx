@@ -4,9 +4,10 @@ import { Member, Message, Profile } from "@prisma/client";
 import { ChatWelcome } from "./chat-welcome";
 import { useChatQuery } from "@/hooks/use-chat-query";
 import { Loader2, ServerCrash } from "lucide-react";
-import { Fragment } from "react";
+import { Fragment, useRef, ElementRef } from "react";
 import { ChatItem } from "./chat-item";
 import {format} from "date-fns";
+import { useChatSocket } from "@/hooks/use-chat-socket";
 
 const DATE_FORMAT = "d MMM yyyy, HH:mm"
 
@@ -31,6 +32,11 @@ interface ChatMessagesProps{
 export const ChatMessages = ({name,member,chatId,apiUrl,socketUrl,socketQuery,paramKey,paramValue,type}:ChatMessagesProps) => {
 
     const queryKey = `chat:${chatId}`;
+    const addKey = `chat:${chatId}:messages`;
+    const updateKey = `chat:${chatId}:messages:update`;  
+
+    const chatRef = useRef<ElementRef<"div">>(null);
+    const bottomRef = useRef<ElementRef<"div">>(null);
 
     const {
         data,
@@ -44,6 +50,8 @@ export const ChatMessages = ({name,member,chatId,apiUrl,socketUrl,socketQuery,pa
         paramKey,
         paramValue,
       });
+
+      useChatSocket({queryKey,addKey,updateKey});
 
       if(status === "loading"){
         return(
@@ -67,12 +75,12 @@ export const ChatMessages = ({name,member,chatId,apiUrl,socketUrl,socketQuery,pa
         )
       }
     return (
-        <div className="flex-1 flex flex-col py-4 overflow-y-auto">
-            <div className="flex-1"/>
-            <ChatWelcome
+        <div ref={chatRef} className="flex-1 flex flex-col py-4 overflow-y-auto">
+            {!hasNextPage &&<div className="flex-1"/>}
+            {!hasNextPage && (<ChatWelcome
             type={type}
             name={name}
-            />
+            />)}
             <div className="flex flex-col-reverse mt-auto">
                 {data?.pages?.map((group, i) => (
                     <Fragment key={i}>
@@ -84,6 +92,7 @@ export const ChatMessages = ({name,member,chatId,apiUrl,socketUrl,socketQuery,pa
                     </Fragment>
                 ))}
             </div>
+            <div ref={bottomRef} />
         </div>
     )
 }
