@@ -8,6 +8,7 @@ import { Fragment, useRef, ElementRef } from "react";
 import { ChatItem } from "./chat-item";
 import {format} from "date-fns";
 import { useChatSocket } from "@/hooks/use-chat-socket";
+import { useChatScroll } from "@/hooks/use-chat-scroll";
 
 const DATE_FORMAT = "d MMM yyyy, HH:mm"
 
@@ -52,6 +53,13 @@ export const ChatMessages = ({name,member,chatId,apiUrl,socketUrl,socketQuery,pa
       });
 
       useChatSocket({queryKey,addKey,updateKey});
+      useChatScroll({
+        chatRef,
+        bottomRef,
+        loadMore: fetchNextPage,
+        shouldLoadMore: !isFetchingNextPage && !!hasNextPage,
+        count: data?.pages?.[0]?.items?.length ?? 0,
+      })
 
       if(status === "loading"){
         return(
@@ -81,6 +89,17 @@ export const ChatMessages = ({name,member,chatId,apiUrl,socketUrl,socketQuery,pa
             type={type}
             name={name}
             />)}
+            {hasNextPage &&(
+                <div className="flex justify-center">
+                    {isFetchingNextPage?(
+                        <Loader2 className="h-6 w-6 text-zinc-500 animate-spin my-4"/>
+                    ) : (
+                        <button onClick={() =>fetchNextPage()} className="text-zinc-500 hover:text-zinc-600 dark:text-zinc-400 text-xs my-4 dark:hover:text-zinc-300 transition">
+                            Load Previous messages
+                        </button>
+                    )}
+                </div>
+            )}
             <div className="flex flex-col-reverse mt-auto">
                 {data?.pages?.map((group, i) => (
                     <Fragment key={i}>
