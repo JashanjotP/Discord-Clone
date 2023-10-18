@@ -27,6 +27,7 @@ const InviteCodePage = async({
             inviteCode: params.inviteCode,
             members: {
                 some: {
+                    //@ts-ignore
                     profileId: profile.id,
                 }
             }
@@ -45,6 +46,7 @@ const InviteCodePage = async({
             members: {
                 create: [
                     {
+                        //@ts-ignore
                         profileId: profile.id,
                     }
                 ]
